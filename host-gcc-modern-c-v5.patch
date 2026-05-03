@@ -1,0 +1,21 @@
+--- a/gcc/config/tms9900/tms9900.h	2026-05-02 00:00:00.000000000 +0000
++++ b/gcc/config/tms9900/tms9900.h	2026-05-02 00:00:00.000000000 +0000
+@@ -628,19 +628,8 @@ extern void tms9900_output_ascii ();
+ extern bool tms9900_legitimate_constant_p ();
+ extern bool tms9900_constant_address_p ();
+ 
+-extern int simple_memory_operand ();
+ extern void print_operand_address ();
+ extern int legitimate_address_p ();
+ extern void notice_update_cc_on_set ();
+-extern const char *output_branch ();
+-extern const char *output_jump ();
+-extern void tms9900_expand_prologue ();
+-extern void tms9900_expand_epilogue ();
+-extern int tms9900_starting_frame_offset ();
+-extern void tms9900_register_mode_set ();
+-extern void tms9900_register_convert ();
+-extern bool tms9900_operand_subreg_offset ();
+-extern void tms9900_inline_debug ();
+-extern void tms9900_debug_operands ();
+ /* If defined, a C expression which determines whether, and in which direction,

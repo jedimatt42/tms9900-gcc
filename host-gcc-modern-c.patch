@@ -1,0 +1,12 @@
+--- a/gcc/config/tms9900/tms9900.h	2026-05-02 00:00:00.000000000 +0000
++++ b/gcc/config/tms9900/tms9900.h	2026-05-02 00:00:00.000000000 +0000
+@@ -1240,8 +1240,8 @@
+   } while (0)
+ 
+ 
+-#ifdef FILE
+ void tms9900_asm_output_dwarf_delta (FILE *file, int size,
+                                const char *lab1, const char *lab2);
+-#endif
++void tms9900_asm_output_dwarf_offset (FILE *file, int size, const char *lab,
++                                section *base);

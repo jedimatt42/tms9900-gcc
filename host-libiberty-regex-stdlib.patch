@@ -1,0 +1,11 @@
+--- a/libiberty/regex.c	2026-05-02 00:00:00.000000000 +0000
++++ b/libiberty/regex.c	2026-05-02 00:00:00.000000000 +0000
+@@ -124,7 +124,7 @@
+     even if config.h says that we can.  */
+ #  undef REL_ALLOC
+ 
+-#  if defined STDC_HEADERS || defined _LIBC
++#  if defined STDC_HEADERS || defined _LIBC || defined HAVE_STDLIB_H
+ #   include <stdlib.h>
+ #  else
+ char *malloc ();

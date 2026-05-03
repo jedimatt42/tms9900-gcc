@@ -72,6 +72,26 @@ fi
 
 START=`pwd`
 PREFIX=`cd $PREFIX; pwd`
+HOST_COMPAT_PATCH="$START/host-libiberty-regex-stdlib.patch"
+GCC_HOST_COMPAT_PATCH="$START/host-gcc-modern-c.patch"
+GCC_HOST_COMPAT_PATCH_V2="$START/host-gcc-modern-c-v2.patch"
+GCC_HOST_COMPAT_PATCH_V3="$START/host-gcc-modern-c-v3.patch"
+GCC_HOST_COMPAT_PATCH_V4="$START/host-gcc-modern-c-v4.patch"
+GCC_HOST_COMPAT_PATCH_V5="$START/host-gcc-modern-c-v5.patch"
+GCC_HOST_COMPAT_PATCH_V6="$START/host-gcc-modern-c-v6.patch"
+
+# Older autoconf tests in these releases mis-detect ANSI headers on newer glibc,
+# which then strips standard prototypes from libiberty sources.
+export ac_cv_header_stdc=yes
+
+# These releases predate newer default host language modes where identifiers like
+# thread_local become keywords and empty parameter lists change meaning.
+if [ -z "$CC" ] ; then
+  export CC="gcc -std=gnu99"
+fi
+if [ -z "$CXX" ] ; then
+  export CXX="g++ -std=gnu++98"
+fi
 
 echo "=== Getting Binutils sources ==="
 if [ ! -f $BINUTILS_ARCHIVE ] ; then
@@ -104,6 +124,13 @@ if [ ! -f .binutils_patched ] ; then
    cd ..
    touch .binutils_patched
 fi
+if [ ! -f .binutils_host_compat ] ; then
+   cd $BINUTILS_VERSION
+   patch -p1 < "$HOST_COMPAT_PATCH"
+   check_result "=== Failed to apply Binutils host compatibility patch ==="
+   cd ..
+   touch .binutils_host_compat
+fi
 
 echo "=== Decompressing and patching GCC sources ==="
 if [ ! -d $GCC_VERSION ] ; then
@@ -117,10 +144,60 @@ if [ ! -f .gcc_patched ] ; then
    cd ..
    touch .gcc_patched
 fi
+if [ ! -f .gcc_host_compat ] ; then
+   cd $GCC_VERSION
+   patch -p1 < "$HOST_COMPAT_PATCH"
+   check_result "=== Failed to apply GCC host compatibility patch ==="
+   cd ..
+   touch .gcc_host_compat
+fi
+if [ ! -f .gcc_modern_c_compat ] ; then
+   cd $GCC_VERSION
+   patch -p1 < "$GCC_HOST_COMPAT_PATCH"
+   check_result "=== Failed to apply GCC modern C compatibility patch ==="
+   cd ..
+   touch .gcc_modern_c_compat
+fi
+if [ ! -f .gcc_modern_c_compat_v2 ] ; then
+   cd $GCC_VERSION
+   patch -p1 < "$GCC_HOST_COMPAT_PATCH_V2"
+   check_result "=== Failed to apply GCC modern C compatibility patch v2 ==="
+   cd ..
+   touch .gcc_modern_c_compat_v2
+fi
+if [ ! -f .gcc_modern_c_compat_v3 ] ; then
+   cd $GCC_VERSION
+   patch -p1 < "$GCC_HOST_COMPAT_PATCH_V3"
+   check_result "=== Failed to apply GCC modern C compatibility patch v3 ==="
+   cd ..
+   touch .gcc_modern_c_compat_v3
+fi
+if [ ! -f .gcc_modern_c_compat_v4 ] ; then
+   cd $GCC_VERSION
+   patch -p1 < "$GCC_HOST_COMPAT_PATCH_V4"
+   check_result "=== Failed to apply GCC modern C compatibility patch v4 ==="
+   cd ..
+   touch .gcc_modern_c_compat_v4
+fi
+if [ ! -f .gcc_modern_c_compat_v5 ] ; then
+   cd $GCC_VERSION
+   patch -p1 < "$GCC_HOST_COMPAT_PATCH_V5"
+   check_result "=== Failed to apply GCC modern C compatibility patch v5 ==="
+   cd ..
+   touch .gcc_modern_c_compat_v5
+fi
+if [ ! -f .gcc_modern_c_compat_v6 ] ; then
+   cd $GCC_VERSION
+   patch -p1 < "$GCC_HOST_COMPAT_PATCH_V6"
+   check_result "=== Failed to apply GCC modern C compatibility patch v6 ==="
+   cd ..
+   touch .gcc_modern_c_compat_v6
+fi
 
 echo "=== Building Binutils ==="
 if [ ! -f .binutils_built ] ; then
    cd $BINUTILS_VERSION
+   rm -f config.cache */config.cache */*/config.cache
    ./configure --target tms9900 --prefix $PREFIX --disable-build-warnings
    check_result "=== Failed to configure Binutils ==="
    make all
@@ -136,6 +213,7 @@ if [ ! -f .gcc_built ] ; then
    cd $GCC_VERSION
    mkdir build
    cd build
+    rm -f config.cache */config.cache */*/config.cache
    ../configure --prefix $PREFIX --target=tms9900 --enable-languages=c,c++
    check_result "=== Failed to configure GCC ==="
    make all-gcc
@@ -173,4 +251,3 @@ fi
 
 echo "=== Installation complete ==="
 cd $START
-
