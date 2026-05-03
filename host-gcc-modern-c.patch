@@ -1,12 +1,46 @@
 --- a/gcc/config/tms9900/tms9900.h	2026-05-02 00:00:00.000000000 +0000
 +++ b/gcc/config/tms9900/tms9900.h	2026-05-02 00:00:00.000000000 +0000
-@@ -1240,8 +1240,8 @@
+@@ -116,6 +116,8 @@
+ # define TARGET_DEFAULT		0
+ #endif
+ 
++extern void override_options ();
++
+ #define OVERRIDE_OPTIONS override_options ()
+ 
+ /* Define this macro as a C expression for the initializer of an
+@@ -615,6 +617,23 @@ typedef struct tms9900_args
+  int named_count;  /* Number of named arguments (for varargs) */  
+ } CUMULATIVE_ARGS;
+ 
++extern int tms9900_function_arg_padding ();
++extern void tms9900_function_arg_advance ();
++extern void tms9900_init_cumulative_args ();
++extern rtx tms9900_function_arg ();
++extern int tms9900_initial_elimination_offset ();
++extern int tms9900_address_type ();
++extern int tms9900_reg_ok_for_base ();
++extern int tms9900_go_if_legitimate_address ();
++extern void tms9900_output_ascii ();
++#ifndef IN_LIBGCC2
++extern bool tms9900_legitimate_constant_p ();
++extern bool tms9900_constant_address_p ();
++#endif
++
++extern void print_operand_address ();
++extern int legitimate_address_p ();
++extern void notice_update_cc_on_set ();
+ /* If defined, a C expression which determines whether, and in which direction,
+    to pad out an argument with extra space.  The value should be of type
+    `enum direction': either `upward' to pad above the argument,
+@@ -1240,7 +1258,9 @@
    } while (0)
  
  
 -#ifdef FILE
++#ifndef IN_LIBGCC2
  void tms9900_asm_output_dwarf_delta (FILE *file, int size,
                                 const char *lab1, const char *lab2);
--#endif
 +void tms9900_asm_output_dwarf_offset (FILE *file, int size, const char *lab,
 +                                section *base);
+ #endif

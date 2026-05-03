@@ -74,11 +74,6 @@ START=`pwd`
 PREFIX=`cd $PREFIX; pwd`
 HOST_COMPAT_PATCH="$START/host-libiberty-regex-stdlib.patch"
 GCC_HOST_COMPAT_PATCH="$START/host-gcc-modern-c.patch"
-GCC_HOST_COMPAT_PATCH_V2="$START/host-gcc-modern-c-v2.patch"
-GCC_HOST_COMPAT_PATCH_V3="$START/host-gcc-modern-c-v3.patch"
-GCC_HOST_COMPAT_PATCH_V4="$START/host-gcc-modern-c-v4.patch"
-GCC_HOST_COMPAT_PATCH_V5="$START/host-gcc-modern-c-v5.patch"
-GCC_HOST_COMPAT_PATCH_V6="$START/host-gcc-modern-c-v6.patch"
 
 # Older autoconf tests in these releases mis-detect ANSI headers on newer glibc,
 # which then strips standard prototypes from libiberty sources.
@@ -151,47 +146,17 @@ if [ ! -f .gcc_host_compat ] ; then
    cd ..
    touch .gcc_host_compat
 fi
-if [ ! -f .gcc_modern_c_compat ] ; then
+# Keep existing build trees from the split-patch iteration working without
+# forcing a clean rebuild.
+if [ -f .gcc_modern_c_compat_v6 ] && [ ! -f .gcc_modern_c_compat_merged ] ; then
+   touch .gcc_modern_c_compat_merged
+fi
+if [ ! -f .gcc_modern_c_compat_merged ] ; then
    cd $GCC_VERSION
    patch -p1 < "$GCC_HOST_COMPAT_PATCH"
    check_result "=== Failed to apply GCC modern C compatibility patch ==="
    cd ..
-   touch .gcc_modern_c_compat
-fi
-if [ ! -f .gcc_modern_c_compat_v2 ] ; then
-   cd $GCC_VERSION
-   patch -p1 < "$GCC_HOST_COMPAT_PATCH_V2"
-   check_result "=== Failed to apply GCC modern C compatibility patch v2 ==="
-   cd ..
-   touch .gcc_modern_c_compat_v2
-fi
-if [ ! -f .gcc_modern_c_compat_v3 ] ; then
-   cd $GCC_VERSION
-   patch -p1 < "$GCC_HOST_COMPAT_PATCH_V3"
-   check_result "=== Failed to apply GCC modern C compatibility patch v3 ==="
-   cd ..
-   touch .gcc_modern_c_compat_v3
-fi
-if [ ! -f .gcc_modern_c_compat_v4 ] ; then
-   cd $GCC_VERSION
-   patch -p1 < "$GCC_HOST_COMPAT_PATCH_V4"
-   check_result "=== Failed to apply GCC modern C compatibility patch v4 ==="
-   cd ..
-   touch .gcc_modern_c_compat_v4
-fi
-if [ ! -f .gcc_modern_c_compat_v5 ] ; then
-   cd $GCC_VERSION
-   patch -p1 < "$GCC_HOST_COMPAT_PATCH_V5"
-   check_result "=== Failed to apply GCC modern C compatibility patch v5 ==="
-   cd ..
-   touch .gcc_modern_c_compat_v5
-fi
-if [ ! -f .gcc_modern_c_compat_v6 ] ; then
-   cd $GCC_VERSION
-   patch -p1 < "$GCC_HOST_COMPAT_PATCH_V6"
-   check_result "=== Failed to apply GCC modern C compatibility patch v6 ==="
-   cd ..
-   touch .gcc_modern_c_compat_v6
+   touch .gcc_modern_c_compat_merged
 fi
 
 echo "=== Building Binutils ==="
